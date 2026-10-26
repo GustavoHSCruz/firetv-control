@@ -1,0 +1,32 @@
+name: tests
+on: [push, pull_request]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m unittest discover -s tests -v
+      - run: pip install .
+      - run: firetv-control --help
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --check firetv_control/static/app.js
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose config --quiet
+      - run: docker compose build
+      - run: docker compose up -d --wait
+      - run: curl --fail http://127.0.0.1:8765/healthz
+      - if: always()
+        run: docker compose down

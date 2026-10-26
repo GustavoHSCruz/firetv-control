@@ -1,0 +1,9 @@
+.tools/
+__pycache__/
+*.egg-info/
+dist/
+build/
+artifacts/
+.env
+.venv/
+.local/

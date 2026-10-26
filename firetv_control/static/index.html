@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fire TV Control</title><meta name="description" content="Gerencie seu Fire TV pelo PC, na sua rede local.">
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-icon">f<span>›</span></span><span>fire<span class="brand-light">control</span><small>SEU FIRE TV, NO PC</small></span></a>
+    <div class="section-label">ESPAÇO DE CONTROLE</div>
+    <nav aria-label="Navegação principal">
+      <button class="nav active" data-tab="remote"><span>⌘</span> Controle remoto</button>
+      <button class="nav" data-tab="apps"><span>▦</span> Aplicativos</button>
+      <button class="nav" data-tab="files"><span>▱</span> Arquivos</button>
+      <button class="nav" data-tab="home"><span>⌂</span> Personalizar home</button>
+      <button class="nav" data-tab="help"><span>?</span> Como conectar</button>
+    </nav>
+    <div class="sidebar-bottom"><span class="local-dot"></span> Roda no seu computador<small>Conexão direta via ADB · Fire OS</small></div>
+  </aside>
+  <main>
+    <header><div class="breadcrumb">MEUS DISPOSITIVOS <span>/</span> FIRE TV</div><span class="badge" id="connection-status">Desconectado</span></header>
+    <section class="intro"><div><div class="eyebrow">TUDO SOB CONTROLE</div><h1 id="page-title">Seu controle ganhou espaço.</h1><p id="page-description">Navegue na TV sem sair do computador.</p></div><button id="refresh" class="button secondary">↻ Atualizar</button></section>
+    <section class="connection card">
+      <div class="device-icon">▰</div><div class="device-copy"><strong id="device-model">Conecte seu Fire TV</strong><small id="device-detail">Ative a depuração ADB e use a mesma rede Wi-Fi.</small></div>
+      <form id="connect-form"><label class="sr-only" for="address">IP do Fire TV</label><input id="address" placeholder="192.168.1.50:5555" autocomplete="off" required><button class="button primary" type="submit">Conectar <span>↗</span></button></form>
+      <button class="button quiet" id="disconnect" hidden>Desconectar</button>
+    </section>
+    <div id="device-options" class="device-options" hidden><label for="device-select">Dispositivos no ADB</label><select id="device-select"><option value="">Selecione…</option></select><button id="select-device" class="button secondary">Usar dispositivo</button></div>
+    <div class="notice" id="setup-notice" hidden></div>
+    <div id="status" role="status" aria-live="polite" hidden></div>
+
+    <section id="tab-remote" class="tab">
+      <div class="remote-layout">
+        <article class="card screen-card"><div class="card-heading"><div><span class="mini-label">NA SUA TV</span><h2>Uma janela para a tela</h2></div><span class="subtle" id="mirror-state">Vídeo ao vivo no PC</span></div>
+          <div class="screen"><img id="live-video" alt="Vídeo ao vivo do Fire TV" hidden><img id="screenshot" alt="Captura da tela do Fire TV" hidden><div id="screen-placeholder"><div class="tv-outline">▶</div><strong>Sua TV aparece aqui</strong><p>Conecte o dispositivo e inicie o vídeo ao vivo.</p></div></div>
+          <div class="screen-actions"><button id="mirror-start" class="button primary" data-device>▶ Ver ao vivo</button><button id="mirror-stop" class="button secondary" data-device hidden>■ Encerrar vídeo</button><button id="capture" class="button secondary" data-device>▣ Capturar tela</button><a id="save-screenshot" class="button quiet" download="fire-tv.png" hidden>Salvar PNG ↓</a></div>
+          <p class="footnote">Vídeo ao vivo nesta tela, com controle pelo painel. No Fire OS 7, o áudio continua na TV. Conteúdo protegido pode aparecer preto.</p>
+        </article>
+        <article class="card remote-card"><div class="card-heading"><div><span class="mini-label">CONTROLE REMOTO</span><h2>À distância de um clique</h2></div></div>
+          <div class="remote-top"><button data-key="back" data-device title="Voltar" aria-label="Voltar">↶</button><button data-key="home" data-device title="Home" aria-label="Home">⌂</button><button data-key="menu" data-device title="Menu" aria-label="Menu">☰</button></div>
+          <div class="dpad"><button class="up" data-key="up" data-device aria-label="Cima">▴</button><button class="left" data-key="left" data-device aria-label="Esquerda">◂</button><button class="ok" data-key="ok" data-device>OK</button><button class="right" data-key="right" data-device aria-label="Direita">▸</button><button class="down" data-key="down" data-device aria-label="Baixo">▾</button></div>
+          <div class="remote-media"><button data-key="rewind" data-device aria-label="Retroceder">◀◀</button><button data-key="play" data-device aria-label="Reproduzir ou pausar">▶Ⅱ</button><button data-key="forward" data-device aria-label="Avançar">▶▶</button></div>
+          <div class="keyboard-note"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> e <kbd>Enter</kbd> também funcionam</div>
+        </article>
+      </div>
+      <article class="card text-card"><div><h2>Menos cliques para digitar.</h2><p>Abra um campo de texto na TV e envie pelo teclado do PC.</p></div><form id="text-form"><label class="sr-only" for="remote-text">Texto para enviar à TV</label><input id="remote-text" placeholder="Pesquisar um filme, digitar um endereço…" maxlength="500" required><button class="button primary" data-device>Enviar texto ↗</button></form><small>Texto sem acentos ou % (limitação do Android).</small></article>
+    </section>
+
+    <section id="tab-apps" class="tab" hidden>
+      <article class="card upload-card"><div class="upload-icon">↓</div><div><h2>Um novo app na sua TV.</h2><p>Selecione um APK do PC para instalar ou atualizar o aplicativo.</p><small>Use APKs de fontes confiáveis, compatíveis com o seu Fire OS.</small></div><label class="button primary file-button">Selecionar APK<input id="apk-file" type="file" accept=".apk" data-device></label></article>
+      <article class="card"><div class="toolbar"><div><h2>Aplicativos instalados</h2><p>Abra na TV ou remova os apps que não usa mais.</p></div><div class="toolbar-controls"><label class="check"><input id="all-apps" type="checkbox"> Incluir sistema</label><button id="load-apps" class="button secondary" data-device>↻ Carregar</button></div></div><label class="sr-only" for="app-search">Filtrar pacotes de aplicativos</label><input id="app-search" class="search" placeholder="Filtrar por nome do pacote…"><div id="app-list" class="list"><div class="empty">Conecte o Fire TV para ver os aplicativos.</div></div></article>
+    </section>
+
+    <section id="tab-files" class="tab" hidden>
+      <article class="card"><div class="toolbar"><div><h2>Entre o PC e a TV.</h2><p>Navegue no armazenamento compartilhado e transfira seus arquivos.</p></div><label class="button primary file-button">↑ Enviar arquivo<input id="transfer-file" type="file" data-device></label></div>
+        <form id="path-form" class="path-form"><label class="sr-only" for="remote-path">Pasta no Fire TV</label><input id="remote-path" value="/sdcard" spellcheck="false"><button class="button secondary" data-device>Abrir pasta →</button><button class="button quiet" id="parent-folder" type="button" data-device>↑ Subir</button></form>
+        <div class="file-options"><label class="check"><input id="overwrite" type="checkbox"> Permitir substituir arquivo ao enviar</label><span class="subtle" id="file-count"></span></div><div id="file-list" class="list"><div class="empty">Abra uma pasta para começar.</div></div>
+      </article>
+      <p class="footnote">Arquivos de mídia e documentos ficam em /sdcard. Dados privados, senhas e sessões dos apps não ficam acessíveis por esta transferência. Para copiar uma pasta inteira ao PC, use o comando pull no terminal.</p>
+    </section>
+
+    <section id="tab-home" class="tab" hidden>
+      <article class="card home-hero"><div class="eyebrow">DO SEU JEITO</div><h2>Uma home com a sua cara.</h2><p>Com um launcher alternativo compatível, você pode reorganizar apps, escolher o papel de parede e simplificar a tela inicial.</p><a class="button secondary" href="https://github.com/CVasilakis/luncher" target="_blank" rel="noopener noreferrer">Conhecer o Luncher ↗</a></article>
+      <div class="home-steps"><article class="card"><span class="step">01</span><h2>Instale o launcher</h2><p>Baixe um APK compatível na fonte oficial e instale pela aba Aplicativos.</p></article><article class="card"><span class="step">02</span><h2>Escolha o visual</h2><p>Abra o launcher na TV. Ajuste layout, cores e favoritos nas configurações dele. Envie imagens pela aba Arquivos.</p></article><article class="card"><span class="step">03</span><h2>Confira o botão Home</h2><p>Usar o novo launcher como padrão depende do modelo e firmware. Instalá-lo não muda automaticamente o botão Home.</p></article></div>
+      <article class="card"><div class="toolbar"><div><h2>Launchers detectados</h2><p id="current-home">Consulte os aplicativos que declaram uma tela inicial.</p></div><button id="load-home" class="button secondary" data-device>Verificar na TV</button></div><div id="home-list" class="list"><div class="empty">Nenhuma consulta realizada.</div></div></article>
+      <p class="footnote">Este painel consulta e abre launchers; a escolha de layout acontece dentro do launcher. A home original da Amazon não é editada aqui. Launchers Android não funcionam no Vega OS.</p>
+    </section>
+
+    <section id="tab-help" class="tab" hidden>
+      <article class="card guide"><span class="mini-label">PRIMEIRA CONEXÃO</span><h2>Alguns passos na TV. Depois, tudo por aqui.</h2>
+        <ol><li><strong>Confira o sistema.</strong><p>Em Configurações → Meu Fire TV → Sobre, confira o modelo e o sistema. Este painel usa ADB para Fire OS. Vega OS usa ferramentas e pacotes próprios, sem compatibilidade com APK.</p></li>
+        <li><strong>Ative as opções de desenvolvedor.</strong><p>Em Sobre, selecione o nome do dispositivo e pressione OK sete vezes. Volte um nível, abra Opções do desenvolvedor e ative Depuração ADB.</p></li>
+        <li><strong>Encontre o endereço IP.</strong><p>Em Meu Fire TV → Sobre → Rede. Deixe o PC e o Fire TV na mesma rede e digite o IP no campo de conexão deste painel.</p></li>
+        <li><strong>Autorize o computador na TV.</strong><p>Ao conectar, aceite o aviso de depuração que aparecer na TV. Se a primeira tentativa falhar enquanto você autoriza, clique em Conectar outra vez.</p></li></ol>
+        <div class="notice">Se a conexão não funcionar, confira o IP, a depuração ADB, a autorização na TV e se o roteador está isolando dispositivos em uma rede de convidados.</div>
+        <p>ADB permite instalar apps e transferir arquivos. Mantenha a depuração ligada somente quando precisar e não exponha a porta 5555 à internet.</p>
+        <a href="https://developer.amazon.com/docs/fire-tv/connecting-adb-to-device.html" target="_blank" rel="noopener noreferrer">Guia oficial da Amazon ↗</a>
+      </article>
+    </section>
+    <footer><span>firecontrol <span class="subtle">/</span> local, direto, seu.</span><span>Fire TV Control · v0.2</span></footer>
+  </main>
+</body>
+</html>
